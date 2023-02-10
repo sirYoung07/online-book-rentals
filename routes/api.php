@@ -18,5 +18,6 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('/', fn()=>['status'=> true, 'message'=> 'Api is running']);
+Route::get('/', fn()=>['status'=> true, 'message'=> 'Api is running']); 
+
 
