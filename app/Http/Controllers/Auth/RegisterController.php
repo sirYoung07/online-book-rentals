@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterController extends Controller
@@ -21,9 +22,17 @@ class RegisterController extends Controller
 
         $formFields['password'] = bcrypt($formFields['password']);
         $user = User::create($formFields);
+
+        if (!$user) {
+            return $this->failure([], 'Registration fail', self::SERVER_ERROR);
+        } 
+
         return $this->success([
             'user'=> $user,
-            'token' => $user->createToken('access')->plainTextToken
+            'token' => $user->createToken('API TOKEN')->plainTextToken
         ], 'Registration successful', self::CREATED);
+
+        
     }
 }
+

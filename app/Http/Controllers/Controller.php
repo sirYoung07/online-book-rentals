@@ -37,7 +37,7 @@ class Controller extends BaseController
 
     public function failure(array $data = [], string $message = '', int $statuscode = self::BAD_REQUEST){
         return response()->json([
-            'status' => true,
+            'status' => false,
             'message' => $message,
             $data
         ], $statuscode);
