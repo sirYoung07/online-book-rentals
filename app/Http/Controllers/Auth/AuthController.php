@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use GrahamCampbell\ResultType\Success;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Stmt\TryCatch;
@@ -41,7 +42,17 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request){
-        
+        try{
+            $request->user()->tokens()->delete();
+            return $this->success([
+                'message' => 'user successfully logged out'
+            ],'', self::SUCCESS);
+
+        }catch(\Throwable $e){
+            return $this->failure([
+                'error' => $e->getMessage()
+            ], '', self::SERVER_ERROR);
+        }
     }
 } 
     
