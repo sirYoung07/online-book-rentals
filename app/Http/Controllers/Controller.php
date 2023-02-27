@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Models\User;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use App\Notifications\EmailVerificationNotification;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Controller extends BaseController
 {
@@ -41,6 +43,20 @@ class Controller extends BaseController
             'message' => $message,
             $data
         ], $statuscode);
+    }
+
+    public function generatecode(User $user){
+        $code = mt_rand(000000, 999999);
+        $save = $user->codes()->create([
+            'token' => $code,
+            'expires_at' => now()->addMinutes(20)
+        ]);
+        return $code ;
+    }
+
+    public function sendMailVerificationCode(User $user){ 
+        $token = $this->generatecode($user);
+        $user->notify(new EmailVerificationNotification($token));
     }
 
 }
