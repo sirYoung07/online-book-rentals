@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\Code;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
@@ -13,7 +14,7 @@ use PHPUnit\Framework\TestFailure;
 class RegisterController extends Controller
 {
     //
-    public $send;
+    //public $send;
     
     public function register(Request $request){
         try {
@@ -32,9 +33,7 @@ class RegisterController extends Controller
             if (!$user) {
                 return $this->failure([], 'Registration fail', self::SERVER_ERROR);
             } 
-            $this->sendMailVerificationCode($user);
             
-
             return $this->success([
                 'user'=> $user,
                 'token' => $user->createToken('auth_token')->plainTextToken,
