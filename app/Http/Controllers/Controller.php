@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Exists;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Notifications\EmailVerificationNotification;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -49,7 +50,7 @@ class Controller extends BaseController
         ], $statuscode);
     }
 
-    public function generatecode(User $user)
+    public function generatecode()
     {
         $token = mt_rand(000000, 999999);
         return $token; 
@@ -57,14 +58,14 @@ class Controller extends BaseController
 
     public function sendMailVerificationCode(User $user)
     {
-        $token = $this->generatecode($user);
+        $token = $this->generatecode();
         $user = User::find(Auth::id());
         $user->codes()->create([
             'token' => $token,
             'expires_at' => Carbon::now()->addMinutes(10)
         ]);
     
-        $user->notify(new EmailVerificationNotification($token));
+       $user->notify(new EmailVerificationNotification($token));
         return $this->success([
             'info' => 'use the code to verify your email'],'a six-digit verification code has been sent to your mail'
             , self::SUCCESS);
@@ -72,7 +73,7 @@ class Controller extends BaseController
     }
 
     public function resendcode(User $user){
-        $token_exists = Code::where('codeable_id', '=', Auth::id());
+        $token_exists = Code::where('codeable_id', Auth::id());
 
         if($token_exists){
             $token_exists->delete();

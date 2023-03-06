@@ -13,11 +13,9 @@ use PHPUnit\Framework\TestFailure;
 
 class RegisterController extends Controller
 {
-    //
-    //public $send;
     
     public function register(Request $request){
-        try {
+    
             $formFields = $request->validate([
                 'first_name' => ['required', 'string','min:3','max:64'],
                 'last_name' => ['required', 'string', 'min:3', 'max:64'],
@@ -33,18 +31,15 @@ class RegisterController extends Controller
             if (!$user) {
                 return $this->failure([], 'Registration fail', self::SERVER_ERROR);
             } 
+
             
             return $this->success([
                 'user'=> $user,
                 'token' => $user->createToken('auth_token')->plainTextToken,
-                'token type' => 'Bearer'
-            ], 'Registration successful', self::CREATED);
+                'token type' => 'Bearer',
+            ], 'Registration successful.', self::CREATED);
         
-        } catch(\Throwable $e){
-            return $this->failure([
-                'error' => $e->getMessage()
-            ], '', self::SERVER_ERROR);
-        }
+       
     }
 }
 

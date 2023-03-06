@@ -13,46 +13,36 @@ class AuthController extends Controller
 {
     //
     public function login(Request $request){
-        try {
-            $formFields = $request->validate([
-                'email' => 'required|email',
-                'password' => 'required'
-            ]);
-    
-            $login = Auth::guard()->attempt($formFields);
-            if(!$login){
-                return $this->failure([
-                    'error' => 'invalid email or password'
-                ], 'login unsuccessful', self::UNAUTHORIZED);
-            }
-    
-            $user = auth()->user();
-            return $this->success([
-                'user' => $user,
-                'token' => $user->createToken('API TOKEN')->plainTextToken
-            ], 'user logged in successfully', self::SUCCESS);
+        
+        $formFields = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
 
-        }catch(\Throwable $e){
+        $login = Auth::guard()->attempt($formFields);
+        if(!$login){
             return $this->failure([
-                'error' => $e->getMessage()
-            ], '', self::SERVER_ERROR);
-
+                'error' => 'invalid email or password'
+            ], 'login unsuccessful', self::UNAUTHORIZED);
         }
-    
+
+        $user = auth()->user();
+        $this->resendcode($user);
+        return $this->success([
+            'user' => $user,
+            'token' => $user->createToken('API TOKEN')->plainTextToken,
+            'message' => 'use the six digit code sent to your mail to verify your email address'
+        ], 'user logged in successfully', self::SUCCESS);
+
     }
 
     public function logout(Request $request){
-        try{
-            $request->user()->tokens()->delete();
-            return $this->success([
-                'message' => 'user successfully logged out'
-            ],'', self::SUCCESS);
+    
+        $request->user()->tokens()->delete();
+        return $this->success([
+            'message' => 'user successfully logged out'
+        ],'', self::SUCCESS);
 
-        }catch(\Throwable $e){
-            return $this->failure([
-                'error' => $e->getMessage()
-            ], '', self::SERVER_ERROR);
-        }
     }
 } 
     

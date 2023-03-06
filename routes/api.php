@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Controller;
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\PasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,14 @@ Route::group(['prefix' => 'auth'], function () {
          Route::post('verification/verify', [VerificationController::class, 'verifyEmail']);
          Route::post('verification/resend', [Controller::class, 'resendcode']);
      });
+    
+     Route::group(['prefix'=> 'password', 'middleware' => 'guest:sanctum'], function() {
+        Route::post('sendtoken', [PasswordController::class, 'sendcode']);
+        Route::post('resendtoken', [PasswordController::class, 'sendcode']);
+        Route::post('reset', [PasswordController::class, 'reset']);
+
+        
+    });
 });
 
 

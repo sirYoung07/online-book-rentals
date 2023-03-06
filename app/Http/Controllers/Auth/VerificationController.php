@@ -18,20 +18,12 @@ class VerificationController extends Controller
 {
   public function verifyEmail(Request $request, User $user)
   {
-    $validator = Validator::make($request->all(),[
-      'token'=>['required']
-    ]);
-
-    if($validator->fails()){
-      return $this->failure([
-        'errors' => $validator->errors()
-      ], '', self::VALIDATION_ERROR);
-    }
+    $request->validate(['token' => 'required']);
 
     $token_exists = Code::where('token', $request->token);
  
     if($token_exists->get()->isEmpty()){
-      return $this->failure(['error' => 'the submitted is invalid'], '', self::VALIDATION_ERROR);
+      return $this->failure(['error' => 'the submitted is token invalid'], '', self::VALIDATION_ERROR);
 
     }
     
@@ -49,12 +41,14 @@ class VerificationController extends Controller
       return $this->failure([
         'error' => 'the submitted token has expired'], 'please request a new verification code', self::VALIDATION_ERROR );
     }
+
     
+    //$user->markEmailAsVerified(); read about with column convention
     $user = User::find(Auth::user()->id);
     $user->email_verified_at = Carbon::now();
     $user->save();
     
-    return $this->success([''], 'email verification successful'. self::SUCCESS);
+    return $this->success([''], 'email verification successful', self::SUCCESS);
     
     if(!$user->hasVerifiedEmail()){
       return $this->failure([], 'email verification failed');    
