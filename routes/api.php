@@ -41,6 +41,12 @@ Route::group(['prefix' => 'auth'], function () {
 
         
     });
+
 });
+
+Route::group(['prefix' => 'admin', 'middleware' => 'verified'], function(){
+  //  Route::post('')
+}
+);
 
 
