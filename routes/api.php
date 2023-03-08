@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminConroller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\User\UserConroller;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,13 +30,16 @@ Route::group(['prefix' => 'auth'], function () {
    
    
    Route::group(['middleware' => 'auth:sanctum'], function() {
+
          Route::post('logout', [AuthController::class, 'logout']);
          Route::post('verification/send',[VerificationController::class, 'sendMailVerificationCode']);
          Route::post('verification/verify', [VerificationController::class, 'verifyEmail']);
          Route::post('verification/resend', [Controller::class, 'resendcode']);
+
      });
     
      Route::group(['prefix'=> 'password', 'middleware' => 'guest:sanctum'], function() {
+
         Route::post('sendtoken', [PasswordController::class, 'sendcode']);
         Route::post('resendtoken', [PasswordController::class, 'sendcode']);
         Route::post('reset', [PasswordController::class, 'reset']);
@@ -44,9 +49,14 @@ Route::group(['prefix' => 'auth'], function () {
 
 });
 
-Route::group(['prefix' => 'admin', 'middleware' => 'verified'], function(){
-  //  Route::post('')
-}
-);
+Route::group(['middleware' => 'auth:sanctum', 'verified' ], function(){
+
+    Route::group(['prefix' => 'user', ], function(){
+        Route::post('changerole', [UserConroller::class, 'changerole']);
+      
+    });
+});
+
+
 
 

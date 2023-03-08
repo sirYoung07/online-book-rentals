@@ -7,5 +7,13 @@ use Illuminate\Http\Request;
 
 class AdminConroller extends Controller
 {
-    //
+    public function createbook(Request $request){
+        $request->validate([
+            'author' => ['required'],
+            'description' => ['requied', 'mix:20'],
+            'price' => 'required',
+
+        ]);
+
+    }
 }
