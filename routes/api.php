@@ -24,38 +24,90 @@ use App\Http\Controllers\User\UserConroller;
 
 Route::get('/', fn()=>['status'=> true, 'message'=> 'Api is running']); 
 
-Route::group(['prefix' => 'auth'], function () {
-   Route::post('login', [AuthController::class, 'login']);
-   Route::post('register',[RegisterController::class, 'register']);
-   
-   
-   Route::group(['middleware' => 'auth:sanctum'], function() {
+//user routes
+Route::group(['prefix' => 'user'], function(){
 
-         Route::post('logout', [AuthController::class, 'logout']);
-         Route::post('verification/send',[VerificationController::class, 'sendMailVerificationCode']);
-         Route::post('verification/verify', [VerificationController::class, 'verifyEmail']);
-         Route::post('verification/resend', [Controller::class, 'resendcode']);
-
-     });
-    
-     Route::group(['prefix'=> 'password', 'middleware' => 'guest:sanctum'], function() {
-
-        Route::post('sendtoken', [PasswordController::class, 'sendcode']);
-        Route::post('resendtoken', [PasswordController::class, 'sendcode']);
-        Route::post('reset', [PasswordController::class, 'reset']);
-
+    Route::group(['prefix' => 'auth'], function () {
+        Route::post('login', [AuthController::class, 'loginuser']);
+        Route::post('register',[RegisterController::class, 'registeruser']);
         
-    });
+        
+        Route::group(['middleware' => 'auth:user'], function() {
+     
+              Route::post('logout', [AuthController::class, 'logoutuser']);
+              Route::post('verification/send',[VerificationController::class, 'sendMailVerificationCode']);
+              Route::post('verification/verify', [VerificationController::class, 'verifyEmail']);
+              Route::post('verification/resend', [Controller::class, 'resendcode']);
+     
+        });
 
+    });
 });
 
-Route::group(['middleware' => 'auth:sanctum', 'verified' ], function(){
 
-    Route::group(['prefix' => 'user', ], function(){
-        Route::post('changerole', [UserConroller::class, 'changerole']);
-      
+
+
+
+// admin
+Route::group(['prefix' => 'admin'], function(){
+
+    Route::group(['prefix' => 'auth'], function () {
+        Route::post('login', [AuthController::class, 'loginadmin']);
+        Route::post('register',[RegisterController::class, 'registeradmin']);
+        
+        
+        Route::group(['middleware' => 'auth:admin'], function() {
+     
+              Route::post('logout', [AuthController::class, 'logoutadmin']);
+              Route::post('verification/send',[VerificationController::class, 'sendMailVerificationCode']);
+              Route::post('verification/verify', [VerificationController::class, 'verifyEmail']);
+              Route::post('verification/resend', [Controller::class, 'resendcode']);
+     
+        });
+
     });
 });
+
+
+
+
+
+
+//superadmin
+Route::group(['prefix' => 'superadmin'], function(){
+
+    Route::group(['prefix' => 'auth'], function () {
+        Route::post('login', [AuthController::class, 'loginsuperadmin']);
+        Route::post('register',[RegisterController::class, 'registersuperadmin']);
+        
+        
+        Route::group(['middleware' => 'auth:superadmin'], function() {
+     
+              Route::post('logout', [AuthController::class, 'logoutsuperadmin']);
+              Route::post('verification/send',[VerificationController::class, 'sendMailVerificationCode']);
+              Route::post('verification/verify', [VerificationController::class, 'verifyEmail']);
+              Route::post('verification/resend', [Controller::class, 'resendcode']);
+     
+        });
+
+    });
+});
+
+
+
+// reset password routes
+    
+Route::group(['prefix'=> 'password', 'middleware' => 'guest:sanctum'], function() {
+
+    Route::post('sendtoken', [PasswordController::class, 'sendcode']);
+    Route::post('resendtoken', [PasswordController::class, 'sendcode']);
+    Route::post('reset', [PasswordController::class, 'reset']);
+
+    
+});
+
+
+
 
 
 
