@@ -103,7 +103,6 @@ Route::group(['prefix'=> 'password', 'middleware' => 'guest:sanctum'], function(
     Route::post('resendtoken', [PasswordController::class, 'sendcode']);
     Route::post('reset', [PasswordController::class, 'reset']);
 
-    
 });
 
 
